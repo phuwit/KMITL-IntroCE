@@ -22,60 +22,53 @@ void setup() {
   for (int i = 0; i < LED_COUNT; i++) {
     pinMode(LED[i], OUTPUT);
   }
-  attachInterrupt(1, func1, CHANGE);
-  attachInterrupt(0, func2, CHANGE);
+  attachInterrupt(1, func1, RISING);
+  attachInterrupt(0, func2, FALLING);
 }
 
 void loop() {
   digitalWrite(LED[2], HIGH);
   delay(7000);
   digitalWrite(LED[2], LOW);
-  // for (int i = 0; i < 6; i++) {
-  //   digitalWrite(LED[1], HIGH);
-  //   delay(250);
-  //   digitalWrite(LED[1], LOW);
-  //   delay(250);
-  // }
-  digitalWrite(LED[1], HIGH);
-  delay(250);
-  digitalWrite(LED[1], LOW);
-  delay(250);
-  digitalWrite(LED[1], HIGH);
-  delay(250);
-  digitalWrite(LED[1], LOW);
-  delay(250);
-  digitalWrite(LED[1], HIGH);
-  delay(250);
-  digitalWrite(LED[1], LOW);
-  delay(250);
-  digitalWrite(LED[1], HIGH);
-  delay(250);
-  digitalWrite(LED[1], LOW);
-  delay(250);
-  digitalWrite(LED[1], HIGH);
-  delay(250);
-  digitalWrite(LED[1], LOW);
-  delay(250);
-  digitalWrite(LED[1], HIGH);
-  delay(250);
-  digitalWrite(LED[1], LOW);
-  delay(250);
+  for (int i = 0; i < 6; i++) {
+    digitalWrite(LED[1], HIGH);
+    delay(250);
+    digitalWrite(LED[1], LOW);
+    delay(250);
+  }
   digitalWrite(LED[0], HIGH);
   delay(5000);
   digitalWrite(LED[0], LOW);
 }
 
 void func1() {
+  int ledStatus[3];
+  for (int i = 0; i < 3; i++) {
+    ledStatus[i] = digitalRead(LED[i]);
+  }
   digitalWrite(LED[1], LOW);
   digitalWrite(LED[2], LOW);
   digitalWrite(LED[0], HIGH);
-  delay(5000);
-  digitalWrite(LED[0], LOW);
+  for (int i = 0; i < 1000; i++) {
+    delayMicroseconds(5000);
+  }
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(LED[i], ledStatus[i]);
+  }
 }
 
 void func2() {
+  int ledStatus[3];
+  for (int i = 0; i < 3; i++) {
+    ledStatus[i] = digitalRead(LED[i]);
+  }
   for (int i = 0; i < LED_COUNT; i++) {
     digitalWrite(LED[i], LOW);
   }
-  delay(5000);
+  for (int i = 0; i < 1000; i++) {
+    delayMicroseconds(5000);
+  }
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(LED[i], ledStatus[i]);
+  }
 }
