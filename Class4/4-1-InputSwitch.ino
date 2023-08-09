@@ -1,5 +1,6 @@
 const int BUTTON_COUNT = 3;
 const int BUTTON[BUTTON_COUNT] = {3, 4, 2};
+const char BUTTON_TYPE[BUTTON_COUNT] = {'D', 'U', 'I'};
 int buttonState[BUTTON_COUNT];
 int lastButtonState[BUTTON_COUNT] = {LOW};
 unsigned long lastDebounceTime[BUTTON_COUNT] = {0};  // the last time the output pin was toggled
@@ -11,10 +12,13 @@ int ledStatus[LED_COUNT] = {LOW, HIGH, HIGH};
 
 void setup() {
     for (int i = 0; i < BUTTON_COUNT; i++) {
-        pinMode(BUTTON[i], INPUT);
+        if (BUTTON_TYPE[i] == 'I') {
+            pinMode(BUTTON[i], INPUT_PULLUP);
+        }
+        else {
+            pinMode(BUTTON[i], INPUT);
+        }
     }
-
-    pinMode(BUTTON[2], INPUT_PULLUP);
 
     for (int i = 0; i < LED_COUNT; i++) {
         pinMode(LED[i], OUTPUT);
@@ -64,4 +68,8 @@ void deBounce(int buttonIndex) {
     // save the reading. Next time through the loop, it'll be the
     // lastButtonState:
     lastButtonState[buttonIndex] = reading;
+
+    if (BUTTON_TYPE[buttonIndex] != 'D') {
+        buttonState[buttonIndex] = !buttonState[buttonIndex];
+    }
 }
