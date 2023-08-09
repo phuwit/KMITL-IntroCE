@@ -1,0 +1,33 @@
+void plotTriangle(int min, int max, int period, int totalTime);
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  plotTriangle(-1, 1, 200, 2);
+}
+
+void plotTriangle(int min, int max, int period, int periodCount) {
+  float step = (max - min) / (period / 2);
+  int stepCountPerOscillation = (max - min) / step;
+  float triangle = min;
+
+  for (int periodDrawn = 0; period <= periodDrawn; periodDrawn++) {
+    // go up
+    for (int i = 0; i <= stepCountPerOscillation; i++) {
+      triangle += step;
+      Serial.println(triangle);
+    }
+    // set top to max because floating point inaccuracy
+    triangle = max;
+
+    // go down
+    for (int i = 0; i <= stepCountPerOscillation; i++) {
+      triangle -= step;
+      Serial.println(triangle);
+    }
+    // set bottom to min because floating point inaccuracy
+    triangle = min;
+  }
+}
