@@ -21,6 +21,7 @@ const uint8_t SEGMENT_TABLE[12][9] = {
 
 int displayNum = 1;
 int randomNum;
+int numBeforeGuess = -1;
 
 const uint8_t BUTTON_G_PIN = 13;
 const uint8_t BUTTON_A_PIN = 12;
@@ -75,6 +76,11 @@ void loop() {
 
     if (readableButtonStateA == HIGH &&
         readableButtonStateA != lastReadableButtonAState) {
+            if (numBeforeGuess != -1) {
+                displayNum = numBeforeGuess;
+                numBeforeGuess = -1;
+            }
+            
             displayNum++;
             if (displayNum >= 10) {
                 displayNum = 1;
@@ -84,6 +90,8 @@ void loop() {
     }
     if (readableButtonStateG == HIGH &&
         readableButtonStateG != lastReadableButtonGState) {
+            numBeforeGuess = displayNum;
+
             Serial.print("pressed guess, randomNum");
             Serial.println(randomNum);
 
