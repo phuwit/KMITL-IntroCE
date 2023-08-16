@@ -15,11 +15,11 @@ const uint8_t SEGMENT_TABLE[12][9] = {
     {0, 0, 0, 1, 1, 1, 1},  // 7
     {0, 0, 0, 0, 0, 0, 0},  // 8
     {0, 0, 0, 0, 1, 0, 0},  // 9
-    {1, 0, 0, 0, 1, 1, 0},  // More
-    {0, 0, 0, 1, 1, 1, 0},  // Less
+    {0, 1, 1, 1, 0, 0, 1},  // More
+    {1, 1, 1, 0, 0, 0, 1},  // Less
 };
 
-int displayNum = 0;
+int displayNum = 1;
 int randomNum;
 
 const uint8_t BUTTON_G_PIN = 13;
@@ -53,7 +53,7 @@ int deBounce(uint8_t &buttonPin, int &buttonState, int &lastButtonState,
 void setup() {
     Serial.begin(9600);
     randomSeed(analogRead(0));
-    randomNum = random(0, 10);
+    randomNum = random(1, 10);
 
     for (int i = 0; i < NUM_PINS; i++) {
         pinMode(SEGMENT_PINS[i], OUTPUT);
@@ -77,7 +77,7 @@ void loop() {
         readableButtonStateA != lastReadableButtonAState) {
             displayNum++;
             if (displayNum >= 10) {
-                displayNum = 0;
+                displayNum = 1;
             }
             Serial.print("pressed increment displayNum is now");
             Serial.println(displayNum);
@@ -90,15 +90,15 @@ void loop() {
             if(displayNum == randomNum) {
                 Serial.println("correct");
                 displayNum = 0;
-                randomNum = random(0, 10);
+                randomNum = random(1, 10);
             }
             else if(displayNum > randomNum) {
                 Serial.println("should be less");
-                displayNum = 11;
+                displayNum = 10;
             }
             else if(displayNum < randomNum) {
                 Serial.println("should be more");
-                displayNum = 10;
+                displayNum = 11;
             }
     }
 
