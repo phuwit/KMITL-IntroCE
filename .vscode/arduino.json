@@ -1,5 +1,5 @@
 {
-    "sketch": "Class4/Class4.ino",
+    "sketch": "Class4/4-1-InputSwitch/4-1-InputSwitch.ino",
     "board": "arduino:avr:uno",
     "port": "/dev/ttyACM0"
 }
