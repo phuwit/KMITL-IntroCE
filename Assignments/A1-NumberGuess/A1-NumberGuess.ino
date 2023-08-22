@@ -52,6 +52,7 @@ int deBounce(uint8_t &buttonPin, int &buttonState, int &lastButtonState,
 void setup() {
     Serial.begin(9600);
     randomSeed(analogRead(0));
+    randomNum = random(1, 10);
 
     for (int i = 0; i < NUM_PINS; i++) {
         pinMode(SEGMENT_PINS[i], OUTPUT);
