@@ -4,7 +4,7 @@ const uint8_t SEGMENT_PINS[NUM_PINS] = {2, 3, 4, 5, 6, 7, 8, 9};
 // input number to light up from array index then get a,b,c,... segments in
 // index number from SEGMENT_PIN to map into pin number
 const uint8_t SEGMENT_TABLE[12][9] = {
-//   a  b  c  d  e  f  g
+    //   a  b  c  d  e  f  g
     {0, 0, 0, 0, 0, 0, 1},  // 0
     {1, 0, 0, 1, 1, 1, 1},  // 1
     {0, 0, 1, 0, 0, 1, 0},  // 2
@@ -28,8 +28,8 @@ const uint8_t BUTTON_A_PIN = 12;
 
 // debounce stuffs
 // Variables will change:
-int buttonGState;            // the current reading from the input pin
-int buttonAState;            // the current reading from the input pin
+int buttonGState = HIGH;      // the current reading from the input pin
+int buttonAState = HIGH;      // the current reading from the input pin
 int lastButtonGState = HIGH;  // the previous reading from the input pin
 int lastButtonAState = HIGH;  // the previous reading from the input pin
 
@@ -46,15 +46,12 @@ unsigned long lastDebounceTimeButtonA =
 const unsigned long debounceDelay =
     50;  // the debounce time; increase if the output flickers
 
-
 int deBounce(uint8_t &buttonPin, int &buttonState, int &lastButtonState,
              unsigned long &lastDebounceTime);
-
 
 void setup() {
     Serial.begin(9600);
     randomSeed(analogRead(0));
-    randomNum = random(1, 10);
 
     for (int i = 0; i < NUM_PINS; i++) {
         pinMode(SEGMENT_PINS[i], OUTPUT);
@@ -66,48 +63,48 @@ void setup() {
 }
 
 void loop() {
-    int readableButtonStateA =
-        deBounce(BUTTON_A_PIN, buttonAState, lastButtonAState, lastDebounceTimeButtonA);
-    int readableButtonStateG =
-        deBounce(BUTTON_G_PIN, buttonGState, lastButtonGState, lastDebounceTimeButtonG);
-    
+    int readableButtonStateA = deBounce(
+        BUTTON_A_PIN, buttonAState, lastButtonAState, lastDebounceTimeButtonA);
+    int readableButtonStateG = deBounce(
+        BUTTON_G_PIN, buttonGState, lastButtonGState, lastDebounceTimeButtonG);
+
     // Serial.print(readableButtonStateA);
     // Serial.println(readableButtonStateG);
 
     if (readableButtonStateA == HIGH &&
         readableButtonStateA != lastReadableButtonAState) {
-            if (numBeforeGuess != -1) {
-                displayNum = numBeforeGuess;
-                numBeforeGuess = -1;
-            }
-            
-            displayNum++;
-            if (displayNum >= 10) {
-                displayNum = 1;
-            }
-            Serial.print("pressed increment displayNum is now");
-            Serial.println(displayNum);
+        if (numBeforeGuess != -1) {
+            Serial.print("recovering numbeforeguess");
+            Serial.println(numBeforeGuess);
+            displayNum = numBeforeGuess;
+            numBeforeGuess = -1;
+        }
+
+        displayNum++;
+        if (displayNum >= 10) {
+            displayNum = 1;
+        }
+        Serial.print("pressed increment displayNum is now");
+        Serial.println(displayNum);
     }
     if (readableButtonStateG == HIGH &&
         readableButtonStateG != lastReadableButtonGState) {
-            numBeforeGuess = displayNum;
+        numBeforeGuess = displayNum;
 
-            Serial.print("pressed guess, randomNum");
-            Serial.println(randomNum);
+        Serial.print("pressed guess, randomNum");
+        Serial.println(randomNum);
 
-            if(displayNum == randomNum) {
-                Serial.println("correct");
-                displayNum = 0;
-                randomNum = random(1, 10);
-            }
-            else if(displayNum > randomNum) {
-                Serial.println("should be less");
-                displayNum = 10;
-            }
-            else if(displayNum < randomNum) {
-                Serial.println("should be more");
-                displayNum = 11;
-            }
+        if (displayNum == randomNum) {
+            Serial.println("correct");
+            displayNum = 0;
+            randomNum = random(1, 10);
+        } else if (displayNum > randomNum) {
+            Serial.println("should be less");
+            displayNum = 10;
+        } else if (displayNum < randomNum) {
+            Serial.println("should be more");
+            displayNum = 11;
+        }
     }
 
     for (int i = 0; i < 7; i++) {
