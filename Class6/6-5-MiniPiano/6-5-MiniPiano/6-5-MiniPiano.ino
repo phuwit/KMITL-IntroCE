@@ -7,8 +7,8 @@ const uint8_t BUTTON_PIN[BUTTON_COUNT] = {12, 11, 10, 9, 8, 7};
 const uint8_t PIANO_PIN_FREQUENCY[BUTTON_COUNT - 2] = {NOTE_E3, NOTE_F3, NOTE_G3, NOTE_A3};
 
 // deBounce stuffs
-uint8_t buttonState[BUTTON_COUNT] = {LOW};
-uint8_t lastButtonState[BUTTON_COUNT] = {LOW};
+uint8_t buttonState[BUTTON_COUNT] = {HIGH};
+uint8_t lastButtonState[BUTTON_COUNT] = {HIGH};
 uint8_t readableButtonState[BUTTON_COUNT];
 uint8_t lastReadableButtonState[BUTTON_COUNT] = {LOW};
 
@@ -43,11 +43,12 @@ void loop() {
             Serial.println("replay history");
             Serial.println(currentHistoryIndex);
             for (int i = 0; i < currentHistoryIndex; i++) {
-                tone(SPEAKER_PIN, PIANO_PIN_FREQUENCY[i]);
+                tone(SPEAKER_PIN, PIANO_PIN_FREQUENCY[i], 5000);
                 delay(500);
               noTone(SPEAKER_PIN);
               delay(50);
             }
+            noTone(SPEAKER_PIN);
         }
 
         // check if reset
@@ -60,13 +61,13 @@ void loop() {
             Serial.print("played pin");
             Serial.println(i);
             // play tone
-            tone(SPEAKER_PIN, PIANO_PIN_FREQUENCY[i]);
+            tone(SPEAKER_PIN, PIANO_PIN_FREQUENCY[i], 500);
             // save history
             playHistory[currentHistoryIndex] = PIANO_PIN_FREQUENCY[i];
             currentHistoryIndex++;
 
-            delay(500);
-            noTone(SPEAKER_PIN);
+            // delay(500);
+            // noTone(SPEAKER_PIN);
         }
     }
 }
