@@ -28,7 +28,6 @@ void setup() {
   player.position.y = lcd.height - player.height;
 }
 
-
 void drawPlayer() {
   if (analogRead(PIN_ANALOG_X) <= 341) {
     if (player.position.x >= player.width + sc) 
@@ -40,9 +39,13 @@ void drawPlayer() {
   lcd.fillRect(player.position.x, player.position.y, player.width, player.height, GREEN);
 }
 
+void clearPlayer() {
+  lcd.fillRect(player.position.x, player.position.y, player.width, player.height, WHITE);
+}
+
 void loop() {
   //clear buffer
   drawPlayer();
-  lcd.fillScreen(WHITE);
+  clearPlayer();
   //start game logic
 }
