@@ -18,7 +18,7 @@ private:
 };
 Character player;
 
-
+int screenOffset = 30;
 void setup() {
   //lcd.init(lcd.HORIZONTAL);
   lcd.init(lcd.VERTICAL);
@@ -31,10 +31,10 @@ void setup() {
 
 void drawPlayer() {
   if (analogRead(PIN_ANALOG_X) <= 341) {
-    if (player.position.x >= player.width) 
+    if (player.position.x >= player.width + sc) 
       player.position.x -= lcd.width / 10;
   } else if (analogRead(PIN_ANALOG_X) >= 682) {
-    if(player.position.x <= lcd.width - player.width)
+    if(player.position.x <= lcd.width - player.width*2)
       player.position.x += lcd.width / 10;
   }
   lcd.fillRect(player.position.x, player.position.y, player.width, player.height, GREEN);
