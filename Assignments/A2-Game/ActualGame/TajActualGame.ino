@@ -20,20 +20,21 @@ public:
 private:
 };
 int basePlayerSpeed = 10;
-int dashPlayerSpeed = 2 * basePlayerSpeed;
+int dashPlayerSpeed = 10 * basePlayerSpeed;
 Character player;
-const int enemySize = 20;
+const int enemySize = 7;
 Character enemy[enemySize];
 uint16_t colorArray[] = { GREEN, BLUE, BLACK, CYAN, MAGENTA, YELLOW };
 int screenOffset = 30;
 bool isGameEnd = false;
+int enemyUpdateTime = 100;
+unsigned long enemyLastUpdateTime = 0;  // Initialize it to 0 at the start of your program
 void setup() {
   //lcd.init(lcd.HORIZONTAL);
   Serial.begin(9600);
   pinMode(PIN_BUTTON_A, INPUT);
   lcd.init(lcd.VERTICAL);
-
-  //setup player
+  lcd.fillScreen(WHITE);
   player.width = lcd.width / 4;
   player.height = lcd.height / 24;
   player.position.x = lcd.width / 2 - player.width / 2;
@@ -41,18 +42,19 @@ void setup() {
   player.color = colorArray[0];
   player.speed = basePlayerSpeed;
 
-  //setup enemy
   for (int i = 0; i < enemySize; i++) {
-    enemy[i].width = lcd.width / ((rand() % 4) + 6);
+    enemy[i].width = lcd.width / ((rand() % 4) + 20);
     enemy[i].height = enemy[i].width;
     enemy[i].position.x = rand() % (lcd.width - enemy[i].width);
-    enemy[i].position.y = -enemy[i].height;
+    enemy[i].position.y = -(enemy[i].height);
     enemy[i].color = colorArray[1];
-    enemy[i].speed = (rand() % 11) + 10;
+    enemy[i].speed = enemy[i].height * (rand() % 5) * 1/2;
   }
 }
 
 void DrawPlayer() {
+  if(analogRead(PIN_ANALOG_X) <= 341 || analogRead(PIN_ANALOG_X) >= 682)
+    lcd.fillRect(player.position.x, player.position.y, player.width, player.height, WHITE);
   if (analogRead(PIN_ANALOG_X) <= 341) {
     player.position.x -= player.speed;
     if (player.position.x <= 0)
@@ -85,23 +87,28 @@ void PlayerMechanic() {
 
 //enemy
 void EnemyMechanic() {
-  for (int i = 0; i < enemySize; i++) {
-    enemy[i].position.y += enemy[i].speed;
-    if (enemy[i].position.y >= lcd.height) {
-      enemy[i].position.x = rand() % (lcd.width - enemy[i].width);
-      enemy[i].position.y = -enemy[i].height;
+  if (millis() - enemyLastUpdateTime >= enemyUpdateTime) {
+    enemyLastUpdateTime = millis();
+    for (int i = 0; i < enemySize; i++) {
+      lcd.fillRect(enemy[i].position.x, enemy[i].position.y, enemy[i].width, enemy[i].height, WHITE);
+      enemy[i].position.y += enemy[i].speed;
+      if (enemy[i].position.y >= lcd.height) {
+        enemy[i].position.x = rand() % (lcd.width - enemy[i].width);
+        enemy[i].position.y = -enemy[i].height;
+      }
+      lcd.fillRect(enemy[i].position.x, enemy[i].position.y, enemy[i].width, enemy[i].height, RED);
     }
-    lcd.fillRect(enemy[i].position.x, enemy[i].position.y, enemy[i].width, enemy[i].height, RED);
+  } else {
+    for (int i = 0; i < enemySize; i++) {
+      lcd.fillRect(enemy[i].position.x, enemy[i].position.y, enemy[i].width, enemy[i].height, RED);
+    }
   }
 }
 
 void CheckCollision() {
   for (int i = 0; i < enemySize; i++) {
-    bool isCollision = 
-    (player.position.y + player.height >=  enemy[i].position.y) &&
-    (player.position.y <= enemy[i].position.y + enemy[i].height) &&
-    (player.position.x + player.width >= enemy[i].position.x) &&
-    (player.position.x <= enemy[i].position.x + enemy[i].width);
+    bool isCollision =
+      (player.position.y + player.height >= enemy[i].position.y) && (player.position.y <= enemy[i].position.y + enemy[i].height) && (player.position.x + player.width >= enemy[i].position.x) && (player.position.x <= enemy[i].position.x + enemy[i].width);
     if (isCollision)
       isGameEnd = true;
   }
@@ -109,6 +116,7 @@ void CheckCollision() {
 
 void ResetGame() {
   // Reset all game variables and setup
+  lcd.fillScreen(WHITE);
   isGameEnd = false;
   player.position.x = lcd.width / 2 - player.width / 2;
   player.position.y = lcd.height - player.height;
@@ -116,12 +124,12 @@ void ResetGame() {
   player.speed = basePlayerSpeed;
 
   for (int i = 0; i < enemySize; i++) {
-    enemy[i].width = lcd.width / ((rand() % 4) + 6);
+    enemy[i].width = lcd.width / ((rand() % 4) + 20);
     enemy[i].height = enemy[i].width;
     enemy[i].position.x = rand() % (lcd.width - enemy[i].width);
-    enemy[i].position.y = -enemy[i].height;
+    enemy[i].position.y = -(enemy[i].height);
     enemy[i].color = colorArray[1];
-    enemy[i].speed = (rand() % 11) + 10;
+    enemy[i].speed = enemy[i].height * (rand() % 5) * 1/2;
   }
 }
 
@@ -132,14 +140,12 @@ void loop() {
 
   // Rest of your game logic
   if (isGameEnd)
-    lcd.drawString(lcd.width / 3, 60, "Press C to try again", BLACK, 3);
+    lcd.drawString(0, 60, "Press C to try again", BLACK, 1);
   else {
     PlayerMechanic();
     EnemyMechanic();
     CheckCollision();
   }
-
-  // Clear buffer
-  lcd.fillScreen(WHITE);
+  //PlayerMechanic();
+  // EnemyMechanic();
 }
-
