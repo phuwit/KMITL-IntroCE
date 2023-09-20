@@ -7,21 +7,25 @@
 #define LED_E_Y 5
 #define LED_E_G 4
 
-enum States { GoNorth, WaitNorth, GoEast, WaitEast };
+enum States { NorthGreen, NorthYellow, EastGreen, EastYellow, Pedestrian, PedestrianBlink };
 
 struct State {
-    unsigned long lightsData;
+    // int is 2 bytes, it is enough
+    unsigned int lightsData;
     // 6-bit pattern to street output
-    unsigned long delay;
+    unsigned int delay;
     // delay in ms units
-    unsigned long nextState[4];
+    States nextState[8];
 };  // next state for inputs 0,1,2,3
 typedef const struct State SType;
-SType stateData[4] = { {B00001100, 30000, {States::GoNorth, States::WaitNorth, States::GoNorth, States::WaitNorth}},
-                       {B00010100, 5000, {States::GoEast, States::GoEast, States::GoEast, States::GoEast}},
-                       {B00100001, 30000, {States::GoEast, States::GoEast, States::WaitEast, States::WaitEast}},
-                       {B00100010, 5000, {States::GoNorth, States::GoNorth, States::GoNorth, States::GoNorth}}
-                      };
+SType stateData[sizeof(States)] = {
+    {b10001100, 2000, {NorthGreen, NorthYellow, NorthGreen, NorthYellow, NorthYellow, NorthYellow, NorthYellow, NorthYellow}},
+    {b10010100, 500,  {EastGreen, EastGreen, EastGreen, EastGreen, Pedestrian, Pedestrian, Pedestrian, Pedestrian}},
+    {b10100001, 2000, {EastGreen, EastGreen, EastYellow, EastYellow, EastYellow, EastYellow, EastYellow, EastYellow}},
+    {b10100010, 500,  {NorthGreen, NorthGreen, NorthGreen, NorthGreen, Pedestrian, Pedestrian, NorthGreen, NorthGreen}},
+    {b01100100, 2000, {Pedestrian, PedestrianBlink, PedestrianBlink, Pedestrian, PedestrianBlink, PedestrianBlink, PedestrianBlink}},
+    {b10100100, 500,  {EastGreen, EastGreen, NorthGreen, EastGreen, NorthGreen, NorthGreen, EastGreen, EastGreen}}
+};
 unsigned long currentState = 0;  // index to the current state
 
 void setup() {
