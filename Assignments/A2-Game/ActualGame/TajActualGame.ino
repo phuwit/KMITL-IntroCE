@@ -53,13 +53,13 @@ void setup() {
 }
 
 void DrawPlayer() {
-  if(analogRead(PIN_ANALOG_X) <= 341 || analogRead(PIN_ANALOG_X) >= 682)
+  if(analogRead(PIN_ANALOG_X) <= 225 || analogRead(PIN_ANALOG_X) >= 451)
     lcd.fillRect(player.position.x, player.position.y, player.width, player.height, WHITE);
-  if (analogRead(PIN_ANALOG_X) <= 341) {
+  if (analogRead(PIN_ANALOG_X) <= 225) {
     player.position.x -= player.speed;
     if (player.position.x <= 0)
       player.position.x = 0;
-  } else if (analogRead(PIN_ANALOG_X) >= 682) {
+  } else if (analogRead(PIN_ANALOG_X) >= 451) {
     player.position.x += player.speed;
     if (player.position.x >= lcd.width - player.width)
       player.position.x = lcd.width - player.width;
@@ -108,7 +108,10 @@ void EnemyMechanic() {
 void CheckCollision() {
   for (int i = 0; i < enemySize; i++) {
     bool isCollision =
-      (player.position.y + player.height >= enemy[i].position.y) && (player.position.y <= enemy[i].position.y + enemy[i].height) && (player.position.x + player.width >= enemy[i].position.x) && (player.position.x <= enemy[i].position.x + enemy[i].width);
+      (player.position.y + player.height >= enemy[i].position.y) && 
+      (player.position.y <= enemy[i].position.y + enemy[i].height) && 
+      (player.position.x + player.width >= enemy[i].position.x) && 
+      (player.position.x <= enemy[i].position.x + enemy[i].width);
     if (isCollision)
       isGameEnd = true;
   }
@@ -140,12 +143,12 @@ void loop() {
 
   // Rest of your game logic
   if (isGameEnd)
-    lcd.drawString(0, 60, "Press C to try again", BLACK, 1);
+  lcd.drawString(0, 60, "Press C to try again", BLACK, 1);
   else {
     PlayerMechanic();
     EnemyMechanic();
     CheckCollision();
   }
-  //PlayerMechanic();
-  // EnemyMechanic();
+  PlayerMechanic();
+  EnemyMechanic();
 }
