@@ -10,7 +10,7 @@
 #define LED_EAST_YELLOW 6
 #define LED_EAST_GREEN 5
 
-enum States { NorthGreen, NorthYellow, EastGreen, EastYellow, Pedestrian, PedestrianBlink };
+enum States { NorthGreen, NorthYellow, EastGreen, EastYellow, Pedestrian, PedestrianBlink1, PedestrianBlink2, PedestrianBlink3, PedestrianBlink4, PedestrianBlink5, PedestrianBlink6 };
 
 struct State {
     // int is 2 bytes, it is enough
@@ -20,13 +20,18 @@ struct State {
     // delay in ms units
     States nextState[8];
 };  // next state for inputs 0,1,2,3
-const struct State stateData[6] = {
+const struct State stateData[11] = {
     {B10001100, 2000, {NorthYellow, NorthYellow, NorthGreen, NorthYellow, NorthYellow, NorthYellow, NorthYellow, NorthYellow}},
     {B10010100, 500,  {Pedestrian, EastGreen, EastGreen, EastGreen, Pedestrian, Pedestrian, Pedestrian, Pedestrian}},
     {B10100001, 2000, {EastYellow, EastGreen, EastYellow, EastYellow, EastYellow, EastYellow, EastYellow, EastYellow}},
     {B10100010, 500,  {NorthGreen, NorthGreen, NorthGreen, NorthGreen, Pedestrian, Pedestrian, NorthGreen, NorthGreen}},
-    {B01100100, 2000, {PedestrianBlink, PedestrianBlink, PedestrianBlink, PedestrianBlink, Pedestrian, PedestrianBlink, PedestrianBlink}},
-    {B10100100, 500,  {EastGreen, EastGreen, NorthGreen, EastGreen, NorthGreen, NorthGreen, EastGreen, EastGreen}}
+    {B01100100, 2000, {PedestrianBlink1, PedestrianBlink1, PedestrianBlink1, PedestrianBlink1, Pedestrian, PedestrianBlink1, PedestrianBlink1, PedestrianBlink1}},
+    {B00100100, 100,  {PedestrianBlink2, PedestrianBlink2, PedestrianBlink2, PedestrianBlink2, PedestrianBlink2, PedestrianBlink2, PedestrianBlink2, PedestrianBlink2}},
+    {B10100100, 100,  {PedestrianBlink3, PedestrianBlink3, PedestrianBlink3, PedestrianBlink3, PedestrianBlink3, PedestrianBlink3, PedestrianBlink3, PedestrianBlink3}},
+    {B00100100, 100,  {PedestrianBlink4, PedestrianBlink4, PedestrianBlink4, PedestrianBlink4, PedestrianBlink4, PedestrianBlink4, PedestrianBlink4, PedestrianBlink4}},
+    {B10100100, 100,  {PedestrianBlink5, PedestrianBlink5, PedestrianBlink5, PedestrianBlink5, PedestrianBlink5, PedestrianBlink5, PedestrianBlink5, PedestrianBlink5}},
+    {B00100100, 100,  {PedestrianBlink6, PedestrianBlink6, PedestrianBlink6, PedestrianBlink6, PedestrianBlink6, PedestrianBlink6, PedestrianBlink6, PedestrianBlink6}},
+    {B10100100, 100,  {EastGreen, EastGreen, NorthGreen, EastGreen, NorthGreen, EastGreen, NorthGreen, EastGreen}}
 };
 unsigned long currentState = 0;  // index to the current state
 
