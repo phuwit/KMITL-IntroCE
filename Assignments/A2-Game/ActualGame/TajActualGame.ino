@@ -29,28 +29,28 @@ int screenOffset = 30;
 bool isGameEnd = false;
 int enemyUpdateTime = 100;
 unsigned long enemyLastUpdateTime = 0;  // Initialize it to 0 at the start of your program
-void setup() {
-  //lcd.init(lcd.HORIZONTAL);
-  Serial.begin(9600);
-  pinMode(PIN_BUTTON_A, INPUT);
-  lcd.init(lcd.VERTICAL);
-  lcd.fillScreen(WHITE);
-  player.width = lcd.width / 4;
-  player.height = lcd.height / 24;
-  player.position.x = lcd.width / 2 - player.width / 2;
-  player.position.y = lcd.height - player.height;
-  player.color = colorArray[0];
-  player.speed = basePlayerSpeed;
+  void setup() {
+    //lcd.init(lcd.HORIZONTAL);
+    Serial.begin(9600);
+    pinMode(PIN_BUTTON_A, INPUT);
+    lcd.init(lcd.VERTICAL);
+    lcd.fillScreen(WHITE);
+    player.width = lcd.width / 4;
+    player.height = lcd.height / 24;
+    player.position.x = lcd.width / 2 - player.width / 2;
+    player.position.y = lcd.height - player.height;
+    player.color = colorArray[0];
+    player.speed = basePlayerSpeed;
 
-  for (int i = 0; i < enemySize; i++) {
-    enemy[i].width = lcd.width / ((rand() % 4) + 20);
-    enemy[i].height = enemy[i].width;
-    enemy[i].position.x = rand() % (lcd.width - enemy[i].width);
-    enemy[i].position.y = -(enemy[i].height);
-    enemy[i].color = colorArray[1];
-    enemy[i].speed = enemy[i].height * (rand() % 5) * 1/2;
+    for (int i = 0; i < enemySize; i++) {
+      enemy[i].width = lcd.width / ((rand() % 4) + 20);
+      enemy[i].height = enemy[i].width;
+      enemy[i].position.x = rand() % (lcd.width - enemy[i].width);
+      enemy[i].position.y = -(enemy[i].height);
+      enemy[i].color = colorArray[1];
+      enemy[i].speed = enemy[i].height * (rand() % 5) * 1/2;
+    }
   }
-}
 
 void DrawPlayer() {
   if(analogRead(PIN_ANALOG_X) <= 225 || analogRead(PIN_ANALOG_X) >= 451)

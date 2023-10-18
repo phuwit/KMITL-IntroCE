@@ -147,6 +147,7 @@ void loop() {
             stop();
         }
     } else if (sensorsReading[SensorName::LL]) {
+<<<<<<< Updated upstream
         forward(100, 50);
         while (!(
             sensorsReading[SensorName::RR] && sensorsReading[SensorName::LL] &&
@@ -179,6 +180,129 @@ void loop() {
     }
     ldrBaseValue += analogRead(LDR_PIN);
     ldrBaseValue /= 2;
+=======
+      lcd.fillRect(10, 50, 5, 5, GREEN);
+      forward(BASE_POWER, 20);
+      turn_left(HARD_TURN_POWER, 60);
+      stop();
+      lcd.fillRect(10, 50, 5, 5, WHITE);
+    }
+    // sensors_restore();
+    sensors_read(true);
+  }
+  int directionLastMove = 0;
+
+  // if (sensorsReading[SensorName::RR] && sensorsReading[SensorName::R]) {
+  //     lcd.fillRect(10, 50, 5, 5, GREEN);
+  //     forward(100, 50);
+  //     turn_right(200, 130);
+  //     stop();
+  //     lcd.fillRect(10, 50, 5, 5, WHITE);
+  // } else if (sensorsReading[SensorName::LL] && sensorsReading[SensorName::L]) {
+  //     lcd.fillRect(120, 50, 5, 5, GREEN);
+  //     forward(100, 50);
+  //     turn_left(200, 130);
+  //     stop();
+  //     lcd.fillRect(120, 50, 5, 5, WHITE);
+  if (sensorsReading[SensorName::RR] && sensorsReading[SensorName::LL] && sensorsReading[SensorName::R] && sensorsReading[SensorName::L] && sensorsReading[SensorName::C] && directionLastMove == 0) {
+    //debug
+    lcd.fillRect(0, 0, 5000, 5000, GREEN);
+    //actual code
+    stop();
+    delay(500);
+    int blinks = 0;
+    unsigned long startTime = millis();
+    bool lastldrValue = analogRead(LDR_PIN) < 250;
+    //count down fivesec
+    while (millis() - startTime < 5000) {
+      bool ldrValue = analogRead(LDR_PIN) < 250;
+      // Serial.println(analogRead(LDR_PIN));
+      // digitalWrite(LED_BUILTIN, ldrValue);
+      if (ldrValue > lastldrValue) {
+        blinks++;
+      }
+      lastldrValue = ldrValue;
+    }
+    if (blinks <= 1) {
+      //turn left
+      forward(100, 50);
+      turn_left(200, 130);
+      stop();
+      return;
+    } else {
+      //turn right
+      forward(100, 50);
+      turn_right(200, 130);
+      stop();
+    }
+
+  //the code below handle moom laem
+  } else if (sensorsReading[SensorName::RR] && sensorsReading[SensorName::C] && !sensorsReading[SensorName::R]) {
+    forward(BASE_POWER, 700);
+    while (!(sensorsReading[SensorName::RR] || sensorsReading[SensorName::R] || sensorsReading[SensorName::C])) {
+
+      turn_right(HARD_TURN_POWER, 50);
+      stop();
+    }
+    stop();
+    directionLastMove = 1;
+  } else if (sensorsReading[SensorName::LL] && sensorsReading[SensorName::C] && !sensorsReading[SensorName::L]) {
+    forward(BASE_POWER, 700);
+    while (!(sensorsReading[SensorName::LL] || sensorsReading[SensorName::L] || sensorsReading[SensorName::C])) {
+
+      turn_left(HARD_TURN_POWER, 50);
+      stop();
+    }
+    stop();
+    directionLastMove = 1;
+  }
+  //not this code below nah
+  else if (sensorsReading[SensorName::RR]) {
+    lcd.fillRect(120, 50, 5, 5, GREEN);
+    forward(BASE_POWER, 20);
+    turn_right(HARD_TURN_POWER, 60);
+    stop();
+    lcd.fillRect(120, 50, 5, 5, WHITE);
+    lastExtreme = SensorName::RR;
+    directionLastMove = 1;
+  } else if (sensorsReading[SensorName::LL]) {
+    lcd.fillRect(10, 50, 5, 5, GREEN);
+    forward(BASE_POWER, 20);
+    turn_left(HARD_TURN_POWER, 60);
+    stop();
+    lcd.fillRect(10, 50, 5, 5, WHITE);
+    lastExtreme = SensorName::LL;
+    directionLastMove = 1;
+  } else if (sensorsReading[SensorName::R]) {
+    lcd.fillRect(30, 50, 5, 5, GREEN);
+    forward(BASE_POWER, 20);
+    turn_right(TURN_POWER, 60);
+    stop();
+    lcd.fillRect(20, 50, 5, 5, WHITE);
+    directionLastMove = 1;
+  } else if (sensorsReading[SensorName::L]) {
+    lcd.fillRect(90, 50, 5, 5, GREEN);
+    forward(BASE_POWER, 20);
+    turn_left(TURN_POWER, 60);
+    stop();
+    lcd.fillRect(90, 50, 5, 5, WHITE);
+    directionLastMove = 1;
+  } else if (sensorsReading[SensorName::C]) {
+    lcd.fillRect(60, 50, 5, 5, GREEN);
+    forward(BASE_POWER, 60);
+    stop();
+    lcd.fillRect(60, 50, 5, 5, WHITE);
+    directionLastMove = 1;
+  } else {
+    lcd.fillRect(60, 50, 5, 5, GREEN);
+    forward(BASE_POWER, 60);
+    stop();
+    lcd.fillRect(60, 50, 5, 5, WHITE);
+    directionLastMove = 0;
+  }
+  ldrBaseValue += analogRead(LDR_PIN);
+  ldrBaseValue /= 2;
+>>>>>>> Stashed changes
 }
 
 // void loop() {
