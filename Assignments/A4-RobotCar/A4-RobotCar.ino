@@ -1,3 +1,5 @@
+#include "ST7735_TEE.h"
+
 #define white false
 #define black true
 
@@ -17,6 +19,8 @@ const int enableLeft = 6;  // left
 const int leftBackward = 4;
 const int leftForward = 5;
 
+TEE_ST7735 lcd(9, 10, 11, 12, 13);  //Arduino  csk,sda,A0,rst,cs
+
 void sensors_read(bool save);
 void sensors_save();
 void sensors_restore();
@@ -25,6 +29,7 @@ void forward(int speed, int time);
 void backward(int speed, int time);
 void turn_right(int speed, int time);
 void turn_left(int speed, int time);
+
 
 void setup() {
     Serial.begin(9600);
@@ -40,6 +45,10 @@ void setup() {
     pinMode(leftForward, OUTPUT);
 
     delay(1000);
+
+    lcd.init(lcd.VERTICAL);
+    lcd.fillScreen(WHITE);
+    lcd.drawString(10, 10, "hello world", BLACK, 1);
 }
 
 void loop() {
@@ -61,15 +70,19 @@ void loop() {
         sensors_read(true);
     }
 
-    if (sensorsReading[SensorName::RR] && sensorsReading[SensorName::R]) {
-        forward(100, 50);
-        turn_right(200, 130);
-        stop();
-    } else if (sensorsReading[SensorName::LL] && sensorsReading[SensorName::L]) {
-        forward(100, 50);
-        turn_left(200, 130);
-        stop();
-    } else if (sensorsReading[SensorName::RR]) {
+    // if (sensorsReading[SensorName::RR] && sensorsReading[SensorName::R]) {
+    //     lcd.fillRect(10, 50, 5, 5, GREEN);
+    //     forward(100, 50);
+    //     turn_right(200, 130);
+    //     stop();
+    //     lcd.fillRect(10, 50, 5, 5, WHITE);
+    // } else if (sensorsReading[SensorName::LL] && sensorsReading[SensorName::L]) {
+    //     lcd.fillRect(120, 50, 5, 5, GREEN);
+    //     forward(100, 50);
+    //     turn_left(200, 130);
+    //     stop();
+    //     lcd.fillRect(120, 50, 5, 5, WHITE);
+    if (sensorsReading[SensorName::RR]) {
         forward(100, 20);
         turn_right(150, 100);
         stop();
@@ -78,16 +91,27 @@ void loop() {
         turn_left(150, 100);
         stop();
     } else if (sensorsReading[SensorName::R]) {
+        lcd.fillRect(30, 50, 5, 5, GREEN);
         forward(100, 20);
         turn_right(100, 100);
         stop();
+        lcd.fillRect(20, 50, 5, 5, WHITE);
     } else if (sensorsReading[SensorName::L]) {
+        lcd.fillRect(100, 50, 5, 5, GREEN);
         forward(100, 20);
         turn_left(100, 100);
         stop();
+        lcd.fillRect(100, 50, 5, 5, WHITE);
     } else if (sensorsReading[SensorName::C]) {
+        lcd.fillRect(60, 50, 5, 5, GREEN);
         forward(150, 100);
         stop();
+        lcd.fillRect(60, 50, 5, 5, WHITE);
+    } else {
+        lcd.fillRect(60, 50, 5, 5, GREEN);
+        forward(150, 100);
+        stop();
+        lcd.fillRect(60, 50, 5, 5, WHITE);
     }
 }
 
@@ -99,13 +123,16 @@ void loop() {
 
 void sensors_read(bool save) {
     for (int i = 0; i < SENSORS_COUNT; i++) {
-        if (analogRead(SENSORS_PIN[i]) <= SENSOR_THRESHOLD)
+        if (analogRead(SENSORS_PIN[i]) <= SENSOR_THRESHOLD) {
             sensorsReading[i] = white;
-        else
+            lcd.fillRect(10 + 20*i, 30, 5, 5, MAGENTA);
+        } else {
             sensorsReading[i] = black;
-
+            lcd.fillRect(10 + 20*i, 30, 5, 5, WHITE);
+        }
         Serial.print(sensorsReading[i]);
         Serial.print("\t");
+
     }
     Serial.println("");
 
