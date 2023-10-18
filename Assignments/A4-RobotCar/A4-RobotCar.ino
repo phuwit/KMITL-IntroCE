@@ -11,6 +11,7 @@ bool prevoiusSensorsReading[SENSORS_COUNT] = {false};
 const int SENSOR_THRESHOLD = 300;
 
 int offCourse = 0;
+SensorName lastExtreme;
 
 const int enableRight = 3;  // right
 const int rightBackward = 2;
@@ -18,6 +19,10 @@ const int rightForward = 7;
 const int enableLeft = 6;  // left
 const int leftBackward = 4;
 const int leftForward = 5;
+
+const unsigned int BASE_POWER = 255 * 0.35;
+const unsigned int TURN_POWER = 255 * 0.35;
+const unsigned int HARD_TURN_POWER = 255 * 0.4;
 
 TEE_ST7735 lcd(9, 10, 11, 12, 13);  //Arduino  csk,sda,A0,rst,cs
 
@@ -54,18 +59,32 @@ void setup() {
 void loop() {
     sensors_read(true);
 
-    if (offCourse > 50) {
-        forward(150, 100);
+    if (offCourse > 10) {
+        forward(BASE_POWER, 100);
         stop();
         sensors_read(true);
 
         while (offCourse) {
             sensors_read(false);
-            backward(150, 100);
+            backward(BASE_POWER, 100);
         }
 
-        backward(150, 100);
+        backward(BASE_POWER, 100);
         stop();
+
+        if (sensorsReading[SensorName::RR]) {
+            lcd.fillRect(120, 50, 5, 5, GREEN);
+            forward(BASE_POWER, 20);
+            turn_right(HARD_TURN_POWER, 60);
+            stop();
+            lcd.fillRect(120, 50, 5, 5, WHITE);
+        } else if (sensorsReading[SensorName::LL]) {
+            lcd.fillRect(10, 50, 5, 5, GREEN);
+            forward(BASE_POWER, 20);
+            turn_left(HARD_TURN_POWER, 60);
+            stop();
+            lcd.fillRect(10, 50, 5, 5, WHITE);
+        }
         // sensors_restore();
         sensors_read(true);
     }
@@ -83,33 +102,39 @@ void loop() {
     //     stop();
     //     lcd.fillRect(120, 50, 5, 5, WHITE);
     if (sensorsReading[SensorName::RR]) {
-        forward(100, 20);
-        turn_right(150, 100);
+        lcd.fillRect(120, 50, 5, 5, GREEN);
+        forward(BASE_POWER, 20);
+        turn_right(HARD_TURN_POWER, 60);
         stop();
+        lcd.fillRect(120, 50, 5, 5, WHITE);
+        lastExtreme = SensorName::RR;
     } else if (sensorsReading[SensorName::LL]) {
-        forward(100, 20);
-        turn_left(150, 100);
+        lcd.fillRect(10, 50, 5, 5, GREEN);
+        forward(BASE_POWER, 20);
+        turn_left(HARD_TURN_POWER, 60);
         stop();
+        lcd.fillRect(10, 50, 5, 5, WHITE);
+        lastExtreme = SensorName::LL;
     } else if (sensorsReading[SensorName::R]) {
         lcd.fillRect(30, 50, 5, 5, GREEN);
-        forward(100, 20);
-        turn_right(100, 100);
+        forward(BASE_POWER, 20);
+        turn_right(TURN_POWER, 60);
         stop();
         lcd.fillRect(20, 50, 5, 5, WHITE);
     } else if (sensorsReading[SensorName::L]) {
-        lcd.fillRect(100, 50, 5, 5, GREEN);
-        forward(100, 20);
-        turn_left(100, 100);
+        lcd.fillRect(90, 50, 5, 5, GREEN);
+        forward(BASE_POWER, 20);
+        turn_left(TURN_POWER, 60);
         stop();
-        lcd.fillRect(100, 50, 5, 5, WHITE);
+        lcd.fillRect(90, 50, 5, 5, WHITE);
     } else if (sensorsReading[SensorName::C]) {
         lcd.fillRect(60, 50, 5, 5, GREEN);
-        forward(150, 100);
+        forward(BASE_POWER, 60);
         stop();
         lcd.fillRect(60, 50, 5, 5, WHITE);
     } else {
         lcd.fillRect(60, 50, 5, 5, GREEN);
-        forward(150, 100);
+        forward(BASE_POWER, 60);
         stop();
         lcd.fillRect(60, 50, 5, 5, WHITE);
     }
