@@ -147,40 +147,6 @@ void loop() {
             stop();
         }
     } else if (sensorsReading[SensorName::LL]) {
-<<<<<<< Updated upstream
-        forward(100, 50);
-        while (!(
-            sensorsReading[SensorName::RR] && sensorsReading[SensorName::LL] &&
-            sensorsReading[SensorName::R] && sensorsReading[SensorName::L])) {
-            turn_left(100, 20);
-            stop();
-        }
-    } else if (sensorsReading[SensorName::R]) {
-        lcd.fillRect(30, 50, 5, 5, GREEN);
-        forward(BASE_POWER, 20);
-        turn_right(TURN_POWER, 60);
-        stop();
-        lcd.fillRect(20, 50, 5, 5, WHITE);
-    } else if (sensorsReading[SensorName::L]) {
-        lcd.fillRect(90, 50, 5, 5, GREEN);
-        forward(BASE_POWER, 20);
-        turn_left(TURN_POWER, 60);
-        stop();
-        lcd.fillRect(90, 50, 5, 5, WHITE);
-    } else if (sensorsReading[SensorName::C]) {
-        lcd.fillRect(60, 50, 5, 5, GREEN);
-        forward(BASE_POWER, 60);
-        stop();
-        lcd.fillRect(60, 50, 5, 5, WHITE);
-    } else {
-        lcd.fillRect(60, 50, 5, 5, GREEN);
-        forward(BASE_POWER, 60);
-        stop();
-        lcd.fillRect(60, 50, 5, 5, WHITE);
-    }
-    ldrBaseValue += analogRead(LDR_PIN);
-    ldrBaseValue /= 2;
-=======
       lcd.fillRect(10, 50, 5, 5, GREEN);
       forward(BASE_POWER, 20);
       turn_left(HARD_TURN_POWER, 60);
@@ -302,7 +268,6 @@ void loop() {
   }
   ldrBaseValue += analogRead(LDR_PIN);
   ldrBaseValue /= 2;
->>>>>>> Stashed changes
 }
 
 // void loop() {
