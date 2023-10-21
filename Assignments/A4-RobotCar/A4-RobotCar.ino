@@ -1,5 +1,3 @@
-#include "ST7735_TEE.h"
-
 #define white false
 #define black true
 #define LDR_PIN A5
@@ -15,12 +13,14 @@ const int SENSOR_THRESHOLD = 300;
 int offCourse = 0;
 SensorName lastExtreme;
 
-const int enableRight = 3;  // right
-const int rightBackward = 2;
-const int rightForward = 7;
-const int enableLeft = 6;  // left
-const int leftBackward = 4;
-const int leftForward = 5;
+const uint8_t enableRight = 9;  // right
+const uint8_t rightBackward = 8;
+const uint8_t rightForward = 11;
+const uint8_t enableLeft = 10;  // left
+const uint8_t leftBackward = 12;
+const uint8_t leftForward = 13;
+
+const uint8_t switchPin = 8;
 
 const unsigned int BASE_POWER = 255 * 0.35;
 const unsigned int TURN_POWER = 255 * 0.35;
@@ -39,6 +39,7 @@ void backward(int speed, int time);
 void turn_right(int speed, int time);
 void turn_left(int speed, int time);
 void handleIntersection(bool goForward);
+void handleSwitch();
 
 void setup() {
     Serial.begin(9600);
@@ -52,11 +53,16 @@ void setup() {
     pinMode(enableLeft, OUTPUT);
     pinMode(leftBackward, OUTPUT);
     pinMode(leftForward, OUTPUT);
+    pinMode(switchPin, INPUT);
+
+    attachInterrupt(digitalPinToInterrupt(switchPin), handleSwitch(), CHANGE);
 
     delay(1000);
 }
 
 void loop() {
+    if (digitalRead(switchPin)) {
+
     sensors_read(true);
 
     if (offCourse > 10) {
@@ -173,12 +179,13 @@ void loop() {
     }
     // ldrBaseValue += analogRead(LDR_PIN);
     // ldrBaseValue /= 2;
+    }
 }
 
 // void loop() {
 //     forward(150, 200);
-//     turn_left(150, 200);
-//     turn_right(150, 200);
+//     // turn_left(150, 200);
+//     // turn_right(150, 200);
 // }
 
 void sensors_read(bool save) {
@@ -352,4 +359,9 @@ void handleIntersection(bool goForward) {
 
     // Serial.println("back to normal");
     timestampAtIntersection = millis();
+}
+
+void handleSwitch() {
+    Serial.println("Switch triggered");
+    return;
 }
