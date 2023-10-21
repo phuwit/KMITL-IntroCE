@@ -296,7 +296,7 @@ void handleIntersection() {
     // }
 
     if (hardTurnsAfterIntersectionCount >= 3) {
-        forward(BASE_POWER, 400);
+        forward(BASE_POWER, 500);
     } else {
         forward(BASE_POWER, 300);
     }
