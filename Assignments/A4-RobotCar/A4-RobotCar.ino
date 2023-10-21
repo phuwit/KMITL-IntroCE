@@ -21,12 +21,12 @@ const uint8_t leftForward = 13;
 
 const uint8_t switchPin = 3;
 
-const unsigned int BASE_POWER = 255 * 0.4;
-const unsigned int TURN_POWER = 255 * 0.3;
-const unsigned int HARD_TURN_POWER = 255 * 0.4;
+const unsigned int BASE_POWER = 255 * 0.7;
+const unsigned int TURN_POWER = 255 * 0.35;
+const unsigned int HARD_TURN_POWER = 255 * 0.5;
 
 // const float LEFT_OFFSET = 0.16;
-const float LEFT_OFFSET = 0.12;
+const float LEFT_OFFSET = 0.14;
 const float RIGHT_OFFSET = 0.0;
 
 int hardTurnsAfterIntersectionCount = 0;
@@ -67,26 +67,26 @@ void loop() {
     if (digitalRead(switchPin)) {
         sensors_read();
 
-        if (offCourse > 20) {
+        if (offCourse > 10) {
             forward(BASE_POWER, 100);
             stop();
             sensors_read();
 
             while (offCourse) {
                 sensors_read();
-                backward(BASE_POWER, 100);
+                backward(BASE_POWER, 10);
             }
 
-            backward(BASE_POWER, 100);
+            backward(BASE_POWER, 40);
             stop();
 
             if (sensorsReading[SensorName::RR]) {
-                forward(BASE_POWER, 20);
-                turn_right(HARD_TURN_POWER, 60);
+                forward(BASE_POWER, 5);
+                turn_right(HARD_TURN_POWER, 10);
                 stop();
             } else if (sensorsReading[SensorName::LL]) {
-                forward(BASE_POWER, 20);
-                turn_left(HARD_TURN_POWER, 60);
+                forward(BASE_POWER, 5);
+                turn_left(HARD_TURN_POWER, 10);
                 stop();
             }
             sensors_read();
@@ -102,7 +102,7 @@ void loop() {
             hardTurnsAfterIntersectionCount = 1;
             // the code below handle moom laem
         } else if (hardTurnsAfterIntersectionCount >= 3 &&
-                   ((millis() - timestampAtIntersection) > 4000))
+                   ((millis() - timestampAtIntersection) > 3000))
                     // && !isFinishLoop)
         {
             // if (sensorsReading[nextIntersectionSensorToCheck]) {
@@ -122,14 +122,14 @@ void loop() {
                 stop();
                 sensors_read();
             }
-            while (!(sensorsReading[SensorName::R])) {
-                turn_right(HARD_TURN_POWER, 10);
+            while (!(sensorsReading[SensorName::C])) {
+                turn_right(TURN_POWER, 10);
                 stop();
                 sensors_read();
             }
             stop();
-            turn_left(TURN_POWER, 50);
-            forward(TURN_POWER, 300);
+            forward(BASE_POWER, 50);
+            turn_left(TURN_POWER, 100);
         } else if (sensorsReading[SensorName::LL] &&
                    sensorsReading[SensorName::C] &&
                    !sensorsReading[SensorName::L]) {
@@ -138,14 +138,14 @@ void loop() {
                 stop();
                 sensors_read();
             }
-            while (!(sensorsReading[SensorName::L])) {
-                turn_left(HARD_TURN_POWER, 10);
+            while (!(sensorsReading[SensorName::C])) {
+                turn_left(TURN_POWER, 10);
                 stop();
                 sensors_read();
             }
             stop();
-            turn_right(TURN_POWER, 50);
-            forward(TURN_POWER, 300);
+            forward(BASE_POWER, 50);
+            turn_right(TURN_POWER, 100);
         } else if (sensorsReading[SensorName::RR]) {
             forward(BASE_POWER, 5);
             turn_right(HARD_TURN_POWER, 10);
@@ -296,9 +296,9 @@ void handleIntersection() {
     // }
 
     if (hardTurnsAfterIntersectionCount >= 3) {
-        forward(BASE_POWER, 500);
+        forward(BASE_POWER, 200);
     } else {
-        forward(BASE_POWER, 300);
+        forward(BASE_POWER, 100);
     }
 
     // while (sensorsReading[SensorName::L] == white ||
@@ -310,11 +310,11 @@ void handleIntersection() {
 
     if (blinks <= 1) {
         // forward(BASE_POWER, 150);
-        // turn_left(HARD_TURN_POWER, 350);
+        // turn_left(HARD_TURN_POWER, 300);
         // stop();
         nextIntersectionSensorToCheck = SensorName::LL;
 
-        turn_left(HARD_TURN_POWER, 350);
+        turn_left(HARD_TURN_POWER, 300);
 
         while (sensorsReading[SensorName::L] == white) {
             turn_left(TURN_POWER, 20);
@@ -327,10 +327,10 @@ void handleIntersection() {
         stop();
     } else {
         // forward(BASE_POWER, 150);
-        // turn_right(HARD_TURN_POWER, 350);
+        // turn_right(HARD_TURN_POWER, 300);
         // stop();
 
-        turn_right(HARD_TURN_POWER, 350);
+        turn_right(HARD_TURN_POWER, 300);
 
         nextIntersectionSensorToCheck = SensorName::RR;
 
@@ -369,6 +369,7 @@ void handleIntersection() {
 }
 
 void handleSwitch() {
+    stop();
     Serial.println("Switch triggered");
     reset();
 }
